@@ -1,4 +1,4 @@
-import Vue from 'vue';
+import Vue from 'vue'
 
 const app = new Vue({
   data: {
@@ -8,4 +8,4 @@ const app = new Vue({
 
 })
 
-export { app };
+export { app }
