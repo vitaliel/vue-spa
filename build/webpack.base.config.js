@@ -34,8 +34,8 @@ const config = {
         use: [
           'vue-style-loader',
           {
-            loader: 'css-loader',
-            options: {module: true}
+            loader: 'css-loader'
+            // options: {module: true}
           },
           'sass-loader'
         ]
