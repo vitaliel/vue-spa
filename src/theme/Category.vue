@@ -1,10 +1,9 @@
 <template>
   <div class="columns">
     <div class="column is-one-third" v-for="(post, title) in posts" v-bind:key="post.id">
-      <app-post :link="post.link">
-        <h3 slot="title">{{ post.title }}</h3>
-        <span slot="content">
-            {{ post.content }}
+      <app-post :link="post.rest_api_enabler.Link">
+        <h3 slot="title" v-html="post.title.rendered"></h3>
+        <span slot="content" v-html="post.excerpt.rendered">
         </span>
       </app-post>
     </div>
@@ -12,6 +11,7 @@
 </template>
 <script type="text/javascript">
   import Post from './Post.vue'
+  import appService from '../app.service'
 
   export default {
     components: {
@@ -20,27 +20,21 @@
     data() {
       return {
         id: this.$route.params.id,
-        postsFrontEnd: [
-          {id: 1, title: 'PWA stats', content: 'lorem sum'},
-          {id: 2, title: 'Guide HTTP/2 Server push', content: 'lorem sum'},
-          {id: 3, title: 'GraphQL', content: 'lorem sum'}
-        ],
-        postsMobile: [
-          {id: 4, title: 'Mobile Apps', content: 'lorem sum'},
-          {id: 5, title: 'Learn JS', content: 'lorem sum'},
-          {id: 6, title: 'Vue custom directives', content: 'lorem sum'}
-        ],
         posts: [
         ]
       }
     },
     methods: {
       loadPosts() {
-        if (this.id === 'front-end') {
-          this.posts = this.postsFrontEnd
-        } else {
-          this.posts = this.postsMobile
+        let categoryId = 2
+
+        if (this.id === 'mobile') {
+          categoryId = 11
         }
+
+        appService.getPosts(categoryId).then(data => {
+          this.posts = data
+        })
       }
     },
     watch: {
