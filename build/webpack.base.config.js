@@ -1,4 +1,9 @@
 const path = require('path')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const devMode = process.env.NODE_ENV !== 'production'
 
 const config = {
   mode: process.env.NODE_ENV || "development",
@@ -25,21 +30,38 @@ const config = {
       {
         test: /\.css$/,
         use: [
-          'vue-style-loader',
+          devMode
+            ? 'vue-style-loader'
+            : MiniCssExtractPlugin.loader,
           'css-loader'
         ]
       },
       {
         test: /\.scss$/,
         use: [
-          'vue-style-loader',
-          {
-            loader: 'css-loader'
-            // options: {module: true}
-          },
+          devMode
+            ? 'vue-style-loader'
+            : MiniCssExtractPlugin.loader,
+          'css-loader',
           'sass-loader'
         ]
       }
+    ]
+  },
+  plugins: [
+    new VueLoaderPlugin(),
+    new MiniCssExtractPlugin({
+      filename: 'assets/[name].css'
+    })
+  ],
+  optimization: {
+    minimizer: [
+      new UglifyJsPlugin({
+        cache: true,
+        parallel: true,
+        sourceMap: true
+      }),
+      new OptimizeCssAssetsPlugin()
     ]
   },
   output: {

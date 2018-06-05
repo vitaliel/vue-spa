@@ -1,6 +1,5 @@
 const webpack = require('webpack')
 const clientConfig = require('./webpack.client.config')
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 module.exports = function setupDevServer(app) {
   clientConfig.entry.app = [
@@ -9,8 +8,7 @@ module.exports = function setupDevServer(app) {
   ]
   clientConfig.plugins.push(
     new webpack.HotModuleReplacementPlugin(),
-    new webpack.NoEmitOnErrorsPlugin(),
-    new VueLoaderPlugin()
+    new webpack.NoEmitOnErrorsPlugin()
   )
   const clientCompiler = webpack(clientConfig)
 
