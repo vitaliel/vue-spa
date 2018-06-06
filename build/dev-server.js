@@ -3,7 +3,7 @@ const clientConfig = require('./webpack.client.config')
 
 module.exports = function setupDevServer(app) {
   clientConfig.entry.app = [
-  "webpack-hot-middleware/client",
+  'webpack-hot-middleware/client',
   clientConfig.entry.app
   ]
   clientConfig.plugins.push(
@@ -20,4 +20,10 @@ module.exports = function setupDevServer(app) {
     })
   )
   app.use(require('webpack-hot-middleware')(clientCompiler))
+
+  // in dev mode we will use hot reloading for css
+  app.get('/assets/app.css', (req, res) => {
+    res.write('')
+    res.end()
+  })
 }
