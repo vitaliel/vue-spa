@@ -2,8 +2,6 @@
 <div class="content">
   <div v-if="isAuthenticated">
     <p> Hello authenticated user!</p>
-    <p>Name: {{ profile.firstName }}</p>
-    <p>Favorite Sandwich {{ profile.favoriteSandwich }}</p>
     <button class="button is-primary" @click="logout()">
       Logout
     </button>
@@ -55,56 +53,28 @@
 </div>
 </template>
 <script type="text/javascript">
-  import appService from '../app.service'
-  import eventBus from '../event-bus'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     data() {
       return {
-        isAuthenticated: false,
-        profile: {},
         username: '',
         password: ''
       }
     },
-    watch: {
-      isAuthenticated: function(val) {
-        if (val) {
-          appService.getProfile().then(profile => {
-            this.profile = profile
-          }).catch(() => window.alert('Can not get profile info!'))
-        } else {
-          this.profile = {}
-        }
-
-        eventBus.$emit('authStatusUpdate', val)
-      }
+    computed: {
+      ...mapGetters(['isAuthenticated'])
     },
     methods: {
+      ...mapActions({
+        logout: 'logout'
+      }),
       login() {
-        appService.login({username: this.username, password: this.password})
-        .then(data => {
-          window.localStorage.setItem('token', data.token)
-          window.localStorage.setItem('tokenExpiration', data.expiration)
-          this.isAuthenticated = true
+        this.$store.dispatch('login', {username: this.username, password: this.password})
+        .then(() => {
           this.username = ''
           this.password = ''
-        }).catch((err) => {
-          console.log(err)
-          window.alert('Could not login!')
         })
-      },
-      logout() {
-        this.isAuthenticated = false
-        window.localStorage.setItem('token', '')
-        window.localStorage.setItem('tokenExpiration', '0')
-      }
-    },
-    created() {
-      const expiration = window.localStorage.getItem('tokenExpiration')
-      const unixTimestamp = new Date().getTime() / 1000
-      if (expiration !== null && parseInt(expiration) - unixTimestamp > 0) {
-        this.isAuthenticated = true
       }
     }
   }
